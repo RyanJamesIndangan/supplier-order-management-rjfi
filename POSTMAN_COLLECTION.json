@@ -1,0 +1,339 @@
+{
+  "info": {
+    "name": "Supplier Order Management API",
+    "description": "Collection for testing Supplier Order Management Solution API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "apiVersion",
+      "value": "v1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "API Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Suppliers",
+      "item": [
+        {
+          "name": "Get All Suppliers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "suppliers"]
+            }
+          }
+        },
+        {
+          "name": "Get Supplier by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers/sup-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "suppliers", "sup-001"]
+            }
+          }
+        },
+        {
+          "name": "Create Supplier",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ABC Supplies\",\n  \"email\": \"contact@abcsupplies.com\",\n  \"phone\": \"+1-555-0300\",\n  \"address\": \"789 Supply Lane, Chicago, IL 60601\",\n  \"rating\": 4.8,\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "suppliers"]
+            }
+          }
+        },
+        {
+          "name": "Update Supplier",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4.7,\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers/sup-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "suppliers", "sup-001"]
+            }
+          }
+        },
+        {
+          "name": "Delete Supplier",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers/sup-003",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "suppliers", "sup-003"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "products"]
+            }
+          }
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/products/prod-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "products", "prod-001"]
+            }
+          }
+        },
+        {
+          "name": "Search Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/products/search?query=mouse",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "products", "search"],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "mouse"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mechanical Keyboard\",\n  \"sku\": \"KB-2024-001\",\n  \"description\": \"RGB Mechanical Gaming Keyboard\",\n  \"category\": \"Electronics\",\n  \"price\": 89.99,\n  \"currency\": \"USD\",\n  \"stockQuantity\": 50,\n  \"supplierId\": \"sup-001\",\n  \"status\": \"available\",\n  \"specifications\": {\n    \"color\": \"Black\",\n    \"switchType\": \"Cherry MX Blue\",\n    \"backlight\": \"RGB\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "products"]
+            }
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 27.99,\n  \"stockQuantity\": 200\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/products/prod-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "products", "prod-001"]
+            }
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/products/prod-003",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "products", "prod-003"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Get All Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "orders"]
+            }
+          }
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders/ord-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "orders", "ord-001"]
+            }
+          }
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplierId\": \"sup-001\",\n  \"items\": [\n    {\n      \"productId\": \"prod-001\",\n      \"quantity\": 10,\n      \"unitPrice\": 29.99\n    },\n    {\n      \"productId\": \"prod-002\",\n      \"quantity\": 5,\n      \"unitPrice\": 49.99\n    }\n  ],\n  \"deliveryAddress\": \"123 Business St, San Francisco, CA 94102\",\n  \"expectedDeliveryDate\": \"2024-11-01\",\n  \"notes\": \"Please deliver before 5 PM\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "orders"]
+            }
+          }
+        },
+        {
+          "name": "Update Order",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Updated delivery instructions\",\n  \"expectedDeliveryDate\": \"2024-11-05\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders/ord-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "orders", "ord-001"]
+            }
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"confirmed\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders/ord-001/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "orders", "ord-001", "status"]
+            }
+          }
+        },
+        {
+          "name": "Delete Order",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders/ord-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "orders", "ord-001"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
