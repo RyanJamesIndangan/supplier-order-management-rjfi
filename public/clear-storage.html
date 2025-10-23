@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Storage & Reset</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 { color: #333; margin-bottom: 20px; }
+        p { color: #666; line-height: 1.6; }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover { background: #5568d3; }
+        .success { color: #4caf50; font-weight: bold; margin-top: 20px; }
+        .command-box {
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            text-align: left;
+            position: relative;
+            word-break: break-all;
+        }
+        .command-box code {
+            color: #d63384;
+            display: block;
+            user-select: all;
+        }
+        .copy-btn {
+            background: #28a745;
+            padding: 8px 15px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .copy-btn:hover { background: #218838; }
+        .divider {
+            border-top: 2px solid #eee;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Clear Storage & Reset</h1>
+        <p>This will clear your browser's localStorage and redirect you to the login page with a fresh session.</p>
+        <p><strong>Use this when:</strong></p>
+        <ul style="text-align: left; margin: 20px 40px;">
+            <li>Database was reset</li>
+            <li>Getting authentication errors</li>
+            <li>Starting fresh tests</li>
+        </ul>
+        <button id="clearBtn">Clear & Go to Login</button>
+        <div id="message"></div>
+        
+        <div class="divider"></div>
+        
+        <h2 style="color: #333; font-size: 18px; margin-top: 30px;">🗄️ Reset Database (Optional)</h2>
+        <p style="color: #666; font-size: 14px;">If you also want to reset the database, run this command in your terminal:</p>
+        <div class="command-box">
+            <code id="dbCommand">docker-compose down -v && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d</code>
+        </div>
+        <button class="copy-btn" id="copyBtn">📋 Copy Command</button>
+        <p style="color: #999; font-size: 12px; margin-top: 10px;">⚠️ This will wipe all data and restart with fresh seed data</p>
+    </div>
+
+    <script>
+        function clearAndRedirect() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.getElementById('message').innerHTML = '<p class="success">✅ Storage cleared! Redirecting...</p>';
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
+        }
+
+        function copyCommand() {
+            const command = document.getElementById('dbCommand').textContent;
+            navigator.clipboard.writeText(command).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#28a745';
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy. Please select and copy manually.');
+            });
+        }
+
+        // Attach event listeners (CSP-compliant)
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('clearBtn').addEventListener('click', clearAndRedirect);
+            document.getElementById('copyBtn').addEventListener('click', copyCommand);
+        });
+
+        // Auto-clear if URL has ?auto=true
+        if (window.location.search.includes('auto=true')) {
+            clearAndRedirect();
+        }
+    </script>
+</body>
+</html>
+

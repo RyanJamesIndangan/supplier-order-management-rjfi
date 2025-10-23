@@ -1,35 +1,60 @@
 {
   "name": "supplier-order-management",
-  "version": "1.0.0",
-  "description": "Supplier Order Management Solution - Backend API",
+  "version": "2.0.0",
+  "description": "Supplier Order Management Solution - Backend API with PostgreSQL",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "seed": "node prisma/seed.js",
+    "db:setup": "prisma migrate deploy && npm run seed",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "supplier",
     "order",
     "management",
-    "api"
+    "api",
+    "postgresql",
+    "prisma"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "@google/generative-ai": "^0.24.1",
+    "@prisma/client": "^5.7.0",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
-    "helmet": "^7.1.0",
     "dotenv": "^16.3.1",
-    "uuid": "^9.0.1",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.5.2",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "express-validator": "^7.0.1"
+    "multer": "^2.0.2",
+    "pg": "^8.11.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^9.0.1",
+    "xlsx": "^0.18.5",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "prisma": "^5.7.0"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
-

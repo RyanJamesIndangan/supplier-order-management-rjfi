@@ -15,3 +15,9 @@ coverage
 *.swo
 POSTMAN_COLLECTION.json
 *.md
+.env.example
+PROJECT_OVERVIEW.md
+SETUP_VERIFICATION.md
+START_HERE.md
+PROJECT_STRUCTURE.txt
+scripts/

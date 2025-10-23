@@ -1,5 +1,4 @@
-const Product = require('../models/Product');
-const dataStore = require('../services/dataStore');
+const prisma = require('../config/database');
 const { ApiError } = require('../middlewares/errorHandler');
 
 /**
@@ -7,20 +6,25 @@ const { ApiError } = require('../middlewares/errorHandler');
  */
 const getAllProducts = async (req, res, next) => {
   try {
-    const { supplierId, category, status } = req.query;
-    let products = dataStore.getAll('products');
+    const { category, sku } = req.query;
+    
+    const where = {};
+    if (category) where.category = category;
+    if (sku) where.sku = sku;
 
-    if (supplierId) {
-      products = products.filter(p => p.supplierId === supplierId);
-    }
-
-    if (category) {
-      products = products.filter(p => p.category === category);
-    }
-
-    if (status) {
-      products = products.filter(p => p.status === status);
-    }
+    const products = await prisma.product.findMany({
+      where,
+      include: {
+        offers: {
+          include: {
+            supplier: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
 
     res.status(200).json({
       success: true,
@@ -38,7 +42,17 @@ const getAllProducts = async (req, res, next) => {
 const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const product = dataStore.getById('products', id);
+    
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        offers: {
+          include: {
+            supplier: true
+          }
+        }
+      }
+    });
 
     if (!product) {
       throw new ApiError(404, `Product with ID ${id} not found`);
@@ -58,21 +72,30 @@ const getProductById = async (req, res, next) => {
  */
 const createProduct = async (req, res, next) => {
   try {
-    // Validate supplier exists if supplierId is provided
-    if (req.body.supplierId) {
-      const supplier = dataStore.getById('suppliers', req.body.supplierId);
-      if (!supplier) {
-        throw new ApiError(400, `Supplier with ID ${req.body.supplierId} not found`);
-      }
+    const { name, sku, category, specs } = req.body;
+
+    // Check if SKU already exists
+    const existingProduct = await prisma.product.findUnique({
+      where: { sku }
+    });
+
+    if (existingProduct) {
+      throw new ApiError(400, `Product with SKU ${sku} already exists`);
     }
 
-    const product = new Product(req.body);
-    const created = dataStore.create('products', product.toJSON());
+    const product = await prisma.product.create({
+      data: {
+        name,
+        sku,
+        category,
+        specs: specs || {}
+      }
+    });
 
     res.status(201).json({
       success: true,
       message: 'Product created successfully',
-      data: created
+      data: product
     });
   } catch (error) {
     next(error);
@@ -85,28 +108,46 @@ const createProduct = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const existing = dataStore.getById('products', id);
+    const { name, sku, category, specs } = req.body;
 
-    if (!existing) {
+    // Check if product exists
+    const existingProduct = await prisma.product.findUnique({
+      where: { id }
+    });
+
+    if (!existingProduct) {
       throw new ApiError(404, `Product with ID ${id} not found`);
     }
 
-    // Validate supplier exists if supplierId is being updated
-    if (req.body.supplierId && req.body.supplierId !== existing.supplierId) {
-      const supplier = dataStore.getById('suppliers', req.body.supplierId);
-      if (!supplier) {
-        throw new ApiError(400, `Supplier with ID ${req.body.supplierId} not found`);
+    // If SKU is being updated, check if new SKU already exists
+    if (sku && sku !== existingProduct.sku) {
+      const skuExists = await prisma.product.findUnique({
+        where: { sku }
+      });
+      
+      if (skuExists) {
+        throw new ApiError(400, `Product with SKU ${sku} already exists`);
       }
     }
 
-    const product = new Product(existing);
-    product.update(req.body);
-    const updated = dataStore.update('products', id, product.toJSON());
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (sku !== undefined) updateData.sku = sku;
+    if (category !== undefined) updateData.category = category;
+    if (specs !== undefined) updateData.specs = specs;
+
+    const product = await prisma.product.update({
+      where: { id },
+      data: updateData,
+      include: {
+        offers: true
+      }
+    });
 
     res.status(200).json({
       success: true,
       message: 'Product updated successfully',
-      data: updated
+      data: product
     });
   } catch (error) {
     next(error);
@@ -119,13 +160,22 @@ const updateProduct = async (req, res, next) => {
 const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const existing = dataStore.getById('products', id);
 
-    if (!existing) {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        offers: true
+      }
+    });
+
+    if (!product) {
       throw new ApiError(404, `Product with ID ${id} not found`);
     }
 
-    dataStore.delete('products', id);
+    // Delete product (cascade will handle offers)
+    await prisma.product.delete({
+      where: { id }
+    });
 
     res.status(200).json({
       success: true,
@@ -137,29 +187,43 @@ const deleteProduct = async (req, res, next) => {
 };
 
 /**
- * Search/match products
+ * Search products
  */
 const searchProducts = async (req, res, next) => {
   try {
-    const { query, minPrice, maxPrice } = req.query;
-    let products = dataStore.getAll('products');
+    const { query, category } = req.query;
+
+    const where = {
+      AND: []
+    };
 
     if (query) {
-      const searchTerm = query.toLowerCase();
-      products = products.filter(p => 
-        p.name.toLowerCase().includes(searchTerm) ||
-        p.description?.toLowerCase().includes(searchTerm) ||
-        p.sku.toLowerCase().includes(searchTerm)
-      );
+      where.AND.push({
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+          { sku: { contains: query, mode: 'insensitive' } },
+          { category: { contains: query, mode: 'insensitive' } }
+        ]
+      });
     }
 
-    if (minPrice !== undefined) {
-      products = products.filter(p => p.price >= parseFloat(minPrice));
+    if (category) {
+      where.AND.push({ category });
     }
 
-    if (maxPrice !== undefined) {
-      products = products.filter(p => p.price <= parseFloat(maxPrice));
-    }
+    const products = await prisma.product.findMany({
+      where: where.AND.length > 0 ? where : {},
+      include: {
+        offers: {
+          include: {
+            supplier: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
 
     res.status(200).json({
       success: true,
@@ -179,4 +243,3 @@ module.exports = {
   deleteProduct,
   searchProducts
 };
-

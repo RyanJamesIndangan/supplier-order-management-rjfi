@@ -1,0 +1,70 @@
+From: sales@digitalsuppliers.com
+To: procurement@yourcompany.com
+Date: October 23, 2025
+Subject: Weekly Product Offers - Digital Suppliers
+
+Dear Procurement Team,
+
+Please find our latest product offerings below:
+
+---
+
+PRODUCT: Wireless Gaming Mouse RGB
+SKU: WGM-RGB-2024
+PRICE: $45.99 USD
+SUPPLIER: Digital Suppliers Inc.
+DESCRIPTION: High-precision wireless gaming mouse with customizable RGB lighting, 16000 DPI sensor
+AVAILABILITY: In Stock (500 units)
+
+---
+
+PRODUCT: Mechanical Keyboard Blue Switch
+SKU: MKB-BLUE-001
+PRICE: $89.99 USD
+SUPPLIER: Digital Suppliers Inc.
+DESCRIPTION: 104-key mechanical keyboard with Cherry MX Blue switches, full RGB backlighting
+AVAILABILITY: Limited Stock (150 units)
+
+---
+
+PRODUCT: USB-C Hub 7-port
+SKU: USBCHUB7
+PRICE: $34.99 USD
+SUPPLIER: Digital Suppliers Inc.
+DESCRIPTION: 7-port USB-C hub with power delivery, HDMI output, SD card reader
+AVAILABILITY: In Stock (800 units)
+
+---
+
+PRODUCT: Wireless Optical Mouse (no SKU provided)
+PRICE: $19.99 USD
+SUPPLIER: Digital Suppliers Inc.
+DESCRIPTION: Standard wireless mouse, 2.4GHz connection
+AVAILABILITY: In Stock
+
+---
+
+PRODUCT: Ergo Mouse Pad XXL
+SKU: EMPXXL2024
+PRICE: $29.99 USD
+SUPPLIER: Digital Suppliers Inc.
+DESCRIPTION: Extra large ergonomic mouse pad with wrist rest, non-slip rubber base
+AVAILABILITY: Pre-order (ships Nov 1)
+
+---
+
+Please let us know if you're interested in any of these products.
+We offer bulk discounts for orders over 100 units.
+
+Best regards,
+Sales Team
+Digital Suppliers Inc.
+sales@digitalsuppliers.com
++1-555-0123
+
+---
+NOTE: This is an email text format that needs to be parsed.
+Missing columns: Some products missing SKUs
+Inconsistent format: Various description styles
+Data quality issues: Availability format inconsistent
+

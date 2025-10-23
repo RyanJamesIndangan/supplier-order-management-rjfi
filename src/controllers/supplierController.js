@@ -1,5 +1,4 @@
-const Supplier = require('../models/Supplier');
-const dataStore = require('../services/dataStore');
+const prisma = require('../config/database');
 const { ApiError } = require('../middlewares/errorHandler');
 
 /**
@@ -7,12 +6,18 @@ const { ApiError } = require('../middlewares/errorHandler');
  */
 const getAllSuppliers = async (req, res, next) => {
   try {
-    const { status } = req.query;
-    let suppliers = dataStore.getAll('suppliers');
-
-    if (status) {
-      suppliers = suppliers.filter(s => s.status === status);
-    }
+    const suppliers = await prisma.supplier.findMany({
+      include: {
+        offers: {
+          include: {
+            product: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
 
     res.status(200).json({
       success: true,
@@ -30,7 +35,17 @@ const getAllSuppliers = async (req, res, next) => {
 const getSupplierById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const supplier = dataStore.getById('suppliers', id);
+    
+    const supplier = await prisma.supplier.findUnique({
+      where: { id },
+      include: {
+        offers: {
+          include: {
+            product: true
+          }
+        }
+      }
+    });
 
     if (!supplier) {
       throw new ApiError(404, `Supplier with ID ${id} not found`);
@@ -50,13 +65,19 @@ const getSupplierById = async (req, res, next) => {
  */
 const createSupplier = async (req, res, next) => {
   try {
-    const supplier = new Supplier(req.body);
-    const created = dataStore.create('suppliers', supplier.toJSON());
+    const { name, contactInfo } = req.body;
+
+    const supplier = await prisma.supplier.create({
+      data: {
+        name,
+        contactInfo: contactInfo || {}
+      }
+    });
 
     res.status(201).json({
       success: true,
       message: 'Supplier created successfully',
-      data: created
+      data: supplier
     });
   } catch (error) {
     next(error);
@@ -69,20 +90,32 @@ const createSupplier = async (req, res, next) => {
 const updateSupplier = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const existing = dataStore.getById('suppliers', id);
+    const { name, contactInfo } = req.body;
 
-    if (!existing) {
+    const existingSupplier = await prisma.supplier.findUnique({
+      where: { id }
+    });
+
+    if (!existingSupplier) {
       throw new ApiError(404, `Supplier with ID ${id} not found`);
     }
 
-    const supplier = new Supplier(existing);
-    supplier.update(req.body);
-    const updated = dataStore.update('suppliers', id, supplier.toJSON());
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (contactInfo !== undefined) updateData.contactInfo = contactInfo;
+
+    const supplier = await prisma.supplier.update({
+      where: { id },
+      data: updateData,
+      include: {
+        offers: true
+      }
+    });
 
     res.status(200).json({
       success: true,
       message: 'Supplier updated successfully',
-      data: updated
+      data: supplier
     });
   } catch (error) {
     next(error);
@@ -95,19 +128,22 @@ const updateSupplier = async (req, res, next) => {
 const deleteSupplier = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const existing = dataStore.getById('suppliers', id);
 
-    if (!existing) {
+    const supplier = await prisma.supplier.findUnique({
+      where: { id },
+      include: {
+        offers: true
+      }
+    });
+
+    if (!supplier) {
       throw new ApiError(404, `Supplier with ID ${id} not found`);
     }
 
-    // Check if supplier has associated products
-    const products = dataStore.findBy('products', p => p.supplierId === id);
-    if (products.length > 0) {
-      throw new ApiError(400, `Cannot delete supplier with ${products.length} associated products`);
-    }
-
-    dataStore.delete('suppliers', id);
+    // Delete supplier (cascade will handle offers)
+    await prisma.supplier.delete({
+      where: { id }
+    });
 
     res.status(200).json({
       success: true,
@@ -125,4 +161,3 @@ module.exports = {
   updateSupplier,
   deleteSupplier
 };
-

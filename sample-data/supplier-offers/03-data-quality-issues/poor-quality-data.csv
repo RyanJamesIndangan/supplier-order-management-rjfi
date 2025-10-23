@@ -1,0 +1,12 @@
+Supplier,Product Name,SKU,Price,Currency,Description
+Budget Tech Co,wireless mouse,,15.99,USD,cheap wireless mouse
+,Keyboard Mechanical,KB-001,79.99,,Cherry MX Red switches full size
+Discount Supplies,USB Hub,USBHUB,INVALID_PRICE,USD,7 port USB hub
+No Info Supplier,,,,USD,
+Budget Tech Co,Mouse Pad,MP-001,9.99,EUR,
+Broken Format,Wireless Headset,WH-001,"29.99,USD,Over-ear wireless headphones
+Missing Quotes,Laptop Stand,LS-001,39.99,USD,Aluminum adjustable stand"extra text"
+Budget Tech Co,  Wireless  Mouse  ,WM-SPACE-001,19.99,USD,  Product name with extra spaces  
+Strange Supplier!@#,Cable USB-C,CABLE@#$%,5.99,USD,USB-C charging cable 2m
+Budget Tech Co,Laptop 💻,EMOJI-001,899.99,USD,Product with emoji
+

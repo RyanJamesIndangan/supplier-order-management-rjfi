@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Supplier {
+  id           String   @id @default(uuid())
+  name         String
+  contactInfo  Json?    @map("contact_info")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  offers SupplierOffer[]
+
+  @@map("suppliers")
+}
+
+model SupplierOffer {
+  id           String   @id @default(uuid())
+  supplierId   String   @map("supplier_id")
+  productId    String   @map("product_id")
+  offerName    String   @map("offer_name")
+  offerSku     String?  @map("offer_sku")
+  price        Decimal  @db.Decimal(10, 2)
+  currency     String   @default("USD")
+  quantity     Int?
+  status       String   @default("pending") // pending, accepted, rejected
+  sourceFileId String?  @map("source_file_id") // Track which upload this came from
+  aiConfidence Decimal? @db.Decimal(3, 2) @map("ai_confidence")
+  aiReasoning  String?  @map("ai_reasoning")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  supplier   Supplier      @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  product    Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sourceFile UploadedFile? @relation(fields: [sourceFileId], references: [id], onDelete: SetNull)
+
+  @@map("supplier_offers")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("user")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  uploadedFiles   UploadedFile[]
+  reviewedMatches OfferMatch[]   @relation("ReviewedBy")
+  approvedMatches OfferMatch[]   @relation("ApprovedBy")
+
+  @@map("users")
+}
+
+model UploadedFile {
+  id                      String   @id @default(uuid())
+  filename                String
+  originalName            String   @map("original_name")
+  mimetype                String
+  size                    Int
+  path                    String
+  uploadedBy              String?  @map("uploaded_by")
+  processed               Boolean  @default(false)
+  createdAt               DateTime @default(now()) @map("created_at")
+  
+  // Summary counts (saved at upload time, never change)
+  totalRows               Int?     @map("total_rows")
+  validCount              Int?     @map("valid_count")
+  skippedCount            Int?     @map("skipped_count")
+  matchedToExistingCount  Int?     @map("matched_to_existing_count")
+  newlyCreatedCount       Int?     @map("newly_created_count")
+
+  user            User?                @relation(fields: [uploadedBy], references: [id], onDelete: SetNull)
+  matches         OfferMatch[]
+  supplierOffers  SupplierOffer[]
+  analysisSnapshot FileAnalysisSnapshot? // Permanent analysis data
+
+  @@map("uploaded_files")
+}
+
+// PERMANENT snapshot of file analysis (never modified after creation)
+model FileAnalysisSnapshot {
+  id                String   @id @default(uuid())
+  fileId            String   @unique @map("file_id")
+  
+  // Skipped/invalid offers with reasons (immutable)
+  skippedOffers     Json     @map("skipped_offers")
+  
+  // Original matches as analyzed (before procurement decisions)
+  analyzedMatches   Json     @map("analyzed_matches")
+  
+  // Processing metadata
+  totalRows         Int      @map("total_rows")
+  validCount        Int      @map("valid_count")
+  skippedCount      Int      @map("skipped_count")
+  matchedCount      Int      @map("matched_count")
+  newlyCreatedCount Int      @map("newly_created_count")
+  
+  createdAt         DateTime @default(now()) @map("created_at")
+  
+  uploadedFile      UploadedFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  
+  @@map("file_analysis_snapshots")
+}
+
+model OfferMatch {
+  id               String    @id @default(uuid())
+  fileId           String    @map("file_id")
+  supplierName     String    @map("supplier_name")
+  offerProductName String    @map("offer_product_name")
+  offerSku         String?   @map("offer_sku")
+  offerPrice       Decimal   @db.Decimal(10, 2) @map("offer_price")
+  offerCurrency    String    @default("USD") @map("offer_currency")
+  matchedProductId String?   @map("matched_product_id")
+  confidenceScore  Decimal?  @db.Decimal(3, 2) @map("confidence_score")
+  status           String    @default("pending")
+  aiReasoning      String?   @map("ai_reasoning")
+  reviewedBy       String?   @map("reviewed_by")
+  approvalType     String?   @map("approval_type") // 'auto' or 'manual'
+  approvedBy       String?   @map("approved_by")
+  approvedAt       DateTime? @map("approved_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  file           UploadedFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  matchedProduct Product?     @relation(fields: [matchedProductId], references: [id], onDelete: SetNull)
+  reviewer       User?        @relation("ReviewedBy", fields: [reviewedBy], references: [id], onDelete: SetNull)
+  approver       User?        @relation("ApprovedBy", fields: [approvedBy], references: [id], onDelete: SetNull)
+
+  @@map("offer_matches")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  sku         String   @unique
+  category    String?
+  specs       Json?    @map("specs")
+  autoCreated Boolean  @default(false) @map("auto_created") // Flag auto-created products
+  source      String   @default("manual") // manual, auto, import
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  offers        SupplierOffer[]
+  matchedOffers OfferMatch[]
+
+  @@map("products")
+}
+

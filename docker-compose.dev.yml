@@ -34,8 +34,6 @@ services:
       - JWT_SECRET=supplier-order-mgmt-secret-key-2024
       - GEMINI_API_KEY=AIzaSyDwE9AroHeB22TRHsm35e1hotQHKd9XNSE
     volumes:
-      # Mount source code for development (hot reload)
-      # Comment out for production
       - ./src:/app/src:ro
       - ./public:/app/public:ro
     depends_on:
@@ -50,6 +48,25 @@ services:
       start_period: 10s
     networks:
       - supplier-network
+
+  # Prisma Studio - Database UI
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile.studio
+    container_name: supplier-prisma-studio
+    ports:
+      - "5555:5555"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/supplierdb?schema=public
+    volumes:
+      - ./prisma:/app/prisma:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - supplier-network
+    command: npx prisma studio --port 5555 --hostname 0.0.0.0
 
 networks:
   supplier-network:

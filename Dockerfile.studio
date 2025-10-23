@@ -1,0 +1,25 @@
+FROM node:18-alpine
+
+# Install OpenSSL (required by Prisma)
+RUN apk add --no-cache openssl
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Copy Prisma schema
+COPY prisma ./prisma/
+
+# Install dependencies
+RUN npm install prisma @prisma/client
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Expose Prisma Studio port
+EXPOSE 5555
+
+# Default command (can be overridden in docker-compose)
+CMD ["npx", "prisma", "studio", "--port", "5555", "--hostname", "0.0.0.0"]
+

@@ -1,8 +1,19 @@
 {
   "info": {
-    "name": "Supplier Order Management API",
-    "description": "Collection for testing Supplier Order Management Solution API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "name": "AI Supplier Order Management API - Ryan Indangan",
+    "description": "Complete API collection with automated tests for AI-powered supplier offer matching system. Built by Ryan James Francisco Indangan for AI Software Developer position.\n\n## Quick Start\n1. Import this collection\n2. Run 'Runner' > Select entire collection\n3. Click 'Run Collection' for automated testing\n\n## Features\n- 🤖 AI-powered product matching\n- 📤 File upload (Excel/CSV)\n- 🔐 JWT authentication\n- 📊 Dashboard analytics\n- ✅ Automated tests\n\n## Author\nRyan James Francisco Indangan\nPosition: AI Software Developer",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "ryan-supplier-ai-matching-v2"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
   },
   "variable": [
     {
@@ -11,18 +22,79 @@
       "type": "string"
     },
     {
-      "key": "apiVersion",
-      "value": "v1",
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "supplierId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "offerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fileId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "matchId",
+      "value": "",
       "type": "string"
     }
   ],
   "item": [
     {
-      "name": "Health & Info",
+      "name": "🏥 1. System Health",
       "item": [
         {
           "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"✅ Server is healthy\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql(\"OK\");",
+                  "});",
+                  "",
+                  "pm.test(\"✅ Version is 2.0.0\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.version).to.eql(\"2.0.0\");",
+                  "});",
+                  "",
+                  "pm.test(\"✅ Author is Ryan Indangan\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.author).to.include(\"Ryan\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -34,48 +106,68 @@
         },
         {
           "name": "API Info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ API info retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.version).to.eql(\"2.0.0\");",
+                  "    pm.expect(jsonData.ai).to.include(\"Gemini\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/",
+              "raw": "{{baseUrl}}/api/v1/",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", ""]
+              "path": ["api", "v1", ""]
             }
           }
         }
       ]
     },
     {
-      "name": "Suppliers",
+      "name": "🔐 2. Authentication",
       "item": [
         {
-          "name": "Get All Suppliers",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "suppliers"]
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ User registered (201 or 400 if exists)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.test(\"✅ Token received on registration\", function () {",
+                  "        pm.expect(jsonData.data.token).to.be.a('string');",
+                  "        pm.collectionVariables.set(\"authToken\", jsonData.data.token);",
+                  "        pm.collectionVariables.set(\"userId\", jsonData.data.user.id);",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
             }
-          }
-        },
-        {
-          "name": "Get Supplier by ID",
+          ],
           "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers/sup-001",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "suppliers", "sup-001"]
-            }
-          }
-        },
-        {
-          "name": "Create Supplier",
-          "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -85,19 +177,46 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"ABC Supplies\",\n  \"email\": \"contact@abcsupplies.com\",\n  \"phone\": \"+1-555-0300\",\n  \"address\": \"789 Supply Lane, Chicago, IL 60601\",\n  \"rating\": 4.8,\n  \"status\": \"active\"\n}"
+              "raw": "{\n  \"email\": \"ryan@indangan.com\",\n  \"password\": \"SecurePassword123!\",\n  \"name\": \"Ryan James Francisco Indangan\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers",
+              "raw": "{{baseUrl}}/api/v1/auth/register",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "suppliers"]
+              "path": ["api", "v1", "auth", "register"]
             }
           }
         },
         {
-          "name": "Update Supplier",
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Login successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"✅ JWT token received\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.token).to.be.a('string');",
+                  "    pm.expect(jsonData.data.token.length).to.be.above(20);",
+                  "});",
+                  "",
+                  "// Save token for subsequent requests",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set(\"authToken\", jsonData.data.token);",
+                  "pm.collectionVariables.set(\"userId\", jsonData.data.user.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
-            "method": "PUT",
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
             "header": [
               {
                 "key": "Content-Type",
@@ -106,65 +225,188 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"rating\": 4.7,\n  \"status\": \"active\"\n}"
+              "raw": "{\n  \"email\": \"ryan@indangan.com\",\n  \"password\": \"SecurePassword123!\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers/sup-001",
+              "raw": "{{baseUrl}}/api/v1/auth/login",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "suppliers", "sup-001"]
+              "path": ["api", "v1", "auth", "login"]
             }
           }
         },
         {
-          "name": "Delete Supplier",
+          "name": "Get Profile (Protected)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Profile retrieved with auth\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.name).to.include(\"Ryan\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
-            "method": "DELETE",
+            "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/suppliers/sup-003",
+              "raw": "{{baseUrl}}/api/v1/auth/profile",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "suppliers", "sup-003"]
+              "path": ["api", "v1", "auth", "profile"]
             }
           }
         }
       ]
     },
     {
-      "name": "Products",
+      "name": "📊 3. Dashboard & Analytics",
+      "item": [
+        {
+          "name": "Get Dashboard Statistics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Dashboard data retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.statistics).to.have.property('totalFiles');",
+                  "    pm.expect(jsonData.data.statistics).to.have.property('matchRate');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "dashboard"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏢 4. Suppliers",
+      "item": [
+        {
+          "name": "Get All Suppliers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Suppliers retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Save first supplier ID",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.length > 0) {",
+                  "    pm.collectionVariables.set(\"supplierId\", jsonData.data[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/suppliers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "suppliers"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 5. Products",
       "item": [
         {
           "name": "Get All Products",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/products",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "products"]
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Products retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.count).to.be.above(0);",
+                  "});",
+                  "",
+                  "// Save first product ID",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.length > 0) {",
+                  "    pm.collectionVariables.set(\"productId\", jsonData.data[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
             }
-          }
-        },
-        {
-          "name": "Get Product by ID",
+          ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/products/prod-001",
+              "raw": "{{baseUrl}}/api/v1/products",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "products", "prod-001"]
+              "path": ["api", "v1", "products"]
             }
           }
         },
         {
           "name": "Search Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Product search works\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/products/search?query=mouse",
+              "raw": "{{baseUrl}}/api/v1/products/search?query=mouse",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "products", "search"],
+              "path": ["api", "v1", "products", "search"],
               "query": [
                 {
                   "key": "query",
@@ -173,31 +415,112 @@
               ]
             }
           }
-        },
+        }
+      ]
+    },
+    {
+      "name": "📤 6. File Upload & AI Matching (CORE FEATURE)",
+      "item": [
         {
-          "name": "Create Product",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
+          "name": "Get All Uploaded Files",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Files list retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Save first file ID for match testing",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.length > 0) {",
+                  "    pm.collectionVariables.set(\"fileId\", jsonData.data[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
               }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Mechanical Keyboard\",\n  \"sku\": \"KB-2024-001\",\n  \"description\": \"RGB Mechanical Gaming Keyboard\",\n  \"category\": \"Electronics\",\n  \"price\": 89.99,\n  \"currency\": \"USD\",\n  \"stockQuantity\": 50,\n  \"supplierId\": \"sup-001\",\n  \"status\": \"available\",\n  \"specifications\": {\n    \"color\": \"Black\",\n    \"switchType\": \"Cherry MX Blue\",\n    \"backlight\": \"RGB\"\n  }\n}"
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
             },
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/products",
+              "raw": "{{baseUrl}}/api/v1/upload/files",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "products"]
+              "path": ["api", "v1", "upload", "files"]
             }
           }
         },
         {
-          "name": "Update Product",
+          "name": "Get AI Match Results for File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Match results retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.have.property('statistics');",
+                  "    pm.expect(jsonData.data).to.have.property('matches');",
+                  "});",
+                  "",
+                  "pm.test(\"✅ Statistics include match counts\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.statistics).to.have.property('total');",
+                  "    pm.expect(jsonData.data.statistics).to.have.property('matched');",
+                  "});",
+                  "",
+                  "// Save first match ID for review testing",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data.matches && jsonData.data.matches.length > 0) {",
+                  "    pm.collectionVariables.set(\"matchId\", jsonData.data.matches[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload/files/{{fileId}}/matches",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload", "files", "{{fileId}}", "matches"]
+            }
+          }
+        },
+        {
+          "name": "Approve Match",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Match status updated\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.status).to.eql('approved');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "PUT",
             "header": [
               {
@@ -207,133 +530,225 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"price\": 27.99,\n  \"stockQuantity\": 200\n}"
+              "raw": "{\n  \"status\": \"approved\",\n  \"notes\": \"Reviewed and approved by Ryan\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/products/prod-001",
+              "raw": "{{baseUrl}}/api/v1/upload/matches/{{matchId}}/status",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "products", "prod-001"]
+              "path": ["api", "v1", "upload", "matches", "{{matchId}}", "status"]
             }
           }
         },
         {
-          "name": "Delete Product",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/products/prod-003",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "products", "prod-003"]
+          "name": "📝 Upload Sample File (Manual Test)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ File uploaded successfully\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('uploaded');",
+                  "    pm.expect(jsonData.data.file).to.have.property('id');",
+                  "});",
+                  "",
+                  "pm.test(\"✅ Preview data included\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.preview).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Save new file ID",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set(\"fileId\", jsonData.data.file.id);"
+                ],
+                "type": "text/javascript"
+              }
             }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "sample-data/supplier-offers/tech-supplies-offers.csv",
+                  "description": "Upload CSV file from sample-data folder"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "upload"]
+            },
+            "description": "NOTE: This request requires manual file selection in Postman. Go to Body > form-data > select file from sample-data/supplier-offers/"
           }
         }
       ]
     },
     {
-      "name": "Orders",
+      "name": "💼 7. Procurement Dashboard",
       "item": [
         {
-          "name": "Get All Orders",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "orders"]
-            }
-          }
-        },
-        {
-          "name": "Get Order by ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders/ord-001",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "orders", "ord-001"]
-            }
-          }
-        },
-        {
-          "name": "Create Order",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
+          "name": "Get Procurement Dashboard",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Dashboard data retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
               }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"supplierId\": \"sup-001\",\n  \"items\": [\n    {\n      \"productId\": \"prod-001\",\n      \"quantity\": 10,\n      \"unitPrice\": 29.99\n    },\n    {\n      \"productId\": \"prod-002\",\n      \"quantity\": 5,\n      \"unitPrice\": 49.99\n    }\n  ],\n  \"deliveryAddress\": \"123 Business St, San Francisco, CA 94102\",\n  \"expectedDeliveryDate\": \"2024-11-01\",\n  \"notes\": \"Please deliver before 5 PM\"\n}"
-            },
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders",
+              "raw": "{{baseUrl}}/api/v1/supplier-offers/dashboard",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "orders"]
+              "path": ["api", "v1", "supplier-offers", "dashboard"]
             }
           }
         },
         {
-          "name": "Update Order",
+          "name": "Get Offers by Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Offers retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Save first offer ID for testing",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.length > 0 && jsonData.data[0].offers && jsonData.data[0].offers.length > 0) {",
+                  "    pm.collectionVariables.set(\"offerId\", jsonData.data[0].offers[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/supplier-offers/by-product",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "supplier-offers", "by-product"]
+            }
+          }
+        },
+        {
+          "name": "Get Offers for Specific Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/supplier-offers/product/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "supplier-offers", "product", "{{productId}}"]
+            }
+          }
+        },
+        {
+          "name": "Accept Offer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Offer accepted\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.status).to.equal('accepted');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"notes\": \"Updated delivery instructions\",\n  \"expectedDeliveryDate\": \"2024-11-05\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders/ord-001",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "orders", "ord-001"]
-            }
-          }
-        },
-        {
-          "name": "Update Order Status",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"confirmed\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders/ord-001/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "orders", "ord-001", "status"]
-            }
-          }
-        },
-        {
-          "name": "Delete Order",
-          "request": {
-            "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/orders/ord-001",
+              "raw": "{{baseUrl}}/api/v1/supplier-offers/{{offerId}}/accept",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "orders", "ord-001"]
+              "path": ["api", "v1", "supplier-offers", "{{offerId}}", "accept"]
+            }
+          }
+        },
+        {
+          "name": "Reject Offer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"✅ Offer rejected\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.status).to.equal('rejected');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/supplier-offers/{{offerId}}/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "supplier-offers", "{{offerId}}", "reject"]
             }
           }
         }
       ]
     }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global pre-request script",
+          "console.log('🚀 Running request to: ' + pm.request.url);"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "pm.test(\"⏱️ Response time is acceptable\", function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});"
+        ]
+      }
+    }
   ]
 }
-

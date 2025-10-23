@@ -1,0 +1,6 @@
+"Product Name","SKU","Category","Supplier","Supplier Part #","Price","Currency","AI Confidence","Status","Source File","Auto Created"
+"Duplicate Product","DUP-001","Auto-Generated","Messy Data Inc","DUP-001","29.99","USD","100.0%","accepted","messy-data-quality.xlsx","Yes"
+"Laptop Stand","LS-2024-004","Accessories","Office Essentials Ltd.","","39.99","USD","0.0%","accepted","","No"
+"Mechanical Keyboard","KB-2024-003","Electronics","Messy Data Inc","KB SPACE 001","49.99","USD","13.0%","accepted","messy-data-quality.xlsx","No"
+"USB-C Hub","HUB-2024-002","Electronics","Tech Supplies Inc.","","49.99","USD","0.0%","accepted","","No"
+"Wireless Mouse","WM-2024-001","Electronics","WEIRD@SUPPLIER#NAME","MP@#$001","12.99","EUR","20.0%","accepted","messy-data-quality.xlsx","No"
