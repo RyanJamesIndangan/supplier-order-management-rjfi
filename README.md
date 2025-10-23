@@ -50,12 +50,24 @@ cd supplier-order-management-rjfi
 - **Windows/Mac**: Open Docker Desktop and wait until it says "running"
 - **Linux**: Docker should already be running
 
-### Step 3: Start Everything
+### Step 3: Start Everything (Choose ONE method)
+
+#### 🎯 **Recommended: One-Click Startup**
+```bash
+# Windows
+docker-start.bat
+
+# Mac/Linux
+./docker-start.sh
+```
+
+#### 📝 **Alternative: Manual Command**
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 
 **What this does**:
+- ✅ Automatically fixes line ending issues (works on Windows, Mac, Linux)
 - ✅ Downloads and sets up PostgreSQL database
 - ✅ Downloads and sets up Node.js API
 - ✅ Installs all dependencies automatically
@@ -65,6 +77,8 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 - ✅ Starts API server (http://localhost:3000)
 
 **Wait**: 30-60 seconds for first-time setup
+
+> **Note**: Line endings are now handled automatically! No manual configuration needed on any platform.
 
 ### Step 4: Open Dashboard
 ```
@@ -146,6 +160,11 @@ This guide contains:
 
 ### Start System (Preserves Data)
 ```bash
+# One-Click (Recommended)
+./docker-start.sh          # Mac/Linux
+docker-start.bat           # Windows
+
+# Manual
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 
@@ -161,7 +180,7 @@ docker-compose logs -f api
 
 ### Stop System
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+docker-compose down
 ```
 
 ### Check Status
@@ -172,6 +191,9 @@ docker ps
 ---
 
 ## 🐛 Troubleshooting
+
+### ✅ **Line Ending Issues? SOLVED!**
+The Dockerfile now **automatically fixes line endings** on all platforms. No manual configuration needed!
 
 ### System won't start?
 ```bash
@@ -201,6 +223,9 @@ taskkill /PID <PID> /F
 # Mac/Linux
 lsof -ti:3000 | xargs kill -9
 ```
+
+### Need more help?
+See [`DOCKER_TROUBLESHOOTING.md`](DOCKER_TROUBLESHOOTING.md) for detailed solutions.
 
 ---
 
