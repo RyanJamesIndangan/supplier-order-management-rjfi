@@ -4,6 +4,14 @@
 
 ## Windows
 
+**PowerShell** (Recommended):
+```powershell
+git clone https://github.com/RyanJamesIndangan/supplier-order-management-rjfi.git
+cd supplier-order-management-rjfi
+.\docker-start.bat
+```
+
+**CMD** (Alternative):
 ```cmd
 git clone https://github.com/RyanJamesIndangan/supplier-order-management-rjfi.git
 cd supplier-order-management-rjfi

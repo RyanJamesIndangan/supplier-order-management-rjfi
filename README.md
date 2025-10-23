@@ -56,7 +56,10 @@ cd supplier-order-management-rjfi
 
 #### 🎯 **Recommended: One-Click Startup**
 ```bash
-# Windows
+# Windows PowerShell
+.\docker-start.bat
+
+# Windows CMD
 docker-start.bat
 
 # Mac/Linux
@@ -171,7 +174,8 @@ This guide contains:
 ```bash
 # One-Click (Recommended)
 ./docker-start.sh          # Mac/Linux
-docker-start.bat           # Windows
+.\docker-start.bat         # Windows PowerShell
+docker-start.bat           # Windows CMD
 
 # Manual
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
@@ -209,7 +213,8 @@ The Dockerfile now **automatically fixes line endings** on all platforms. No man
 **Quick Fix (Recommended)**:
 ```bash
 ./docker-fix.sh         # Mac/Linux
-docker-fix.bat          # Windows
+.\docker-fix.bat        # Windows PowerShell
+docker-fix.bat          # Windows CMD
 ```
 
 **Manual Fix**:

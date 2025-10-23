@@ -14,8 +14,9 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 **Easiest Solution**: Use the startup script (it builds automatically):
 ```bash
-./docker-start.sh    # Mac/Linux
-docker-start.bat     # Windows
+./docker-start.sh     # Mac/Linux
+.\docker-start.bat    # Windows PowerShell
+docker-start.bat      # Windows CMD
 ```
 
 ---
@@ -33,7 +34,10 @@ The Dockerfile **automatically fixes line endings** during the build process:
 ## 🚀 Recommended: Use the Automated Startup Script
 
 ```bash
-# Windows
+# Windows PowerShell
+.\docker-start.bat
+
+# Windows CMD
 docker-start.bat
 
 # Mac/Linux
@@ -141,7 +145,8 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 - **Solution**: Use the quick fix script:
   ```bash
   ./docker-fix.sh         # Mac/Linux
-  docker-fix.bat          # Windows
+  .\docker-fix.bat        # Windows PowerShell
+  docker-fix.bat          # Windows CMD
   ```
 - This cleans up orphaned containers and networks
 - Common after switching branches or interrupted builds
@@ -159,7 +164,10 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ## 🎯 Best Practice: Always Use the Startup Script
 
 ```bash
-# Windows
+# Windows PowerShell (most common)
+.\docker-start.bat
+
+# Windows CMD
 docker-start.bat
 
 # Mac/Linux
@@ -167,4 +175,6 @@ docker-start.bat
 ```
 
 The startup scripts include automatic checks and helpful error messages!
+
+**Note**: PowerShell requires `.\` prefix for security. CMD doesn't need it.
 
