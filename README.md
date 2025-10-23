@@ -196,10 +196,19 @@ docker ps
 The Dockerfile now **automatically fixes line endings** on all platforms. No manual configuration needed!
 
 ### System won't start?
+
+**Quick Fix (Recommended)**:
+```bash
+./docker-fix.sh         # Mac/Linux
+docker-fix.bat          # Windows
+```
+
+**Manual Fix**:
 ```bash
 docker-compose down
-docker-compose build --no-cache api
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+docker rm -f supplier-prisma-studio supplier-order-api supplier-postgres
+docker network prune -f
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate
 ```
 
 ### No results after upload?

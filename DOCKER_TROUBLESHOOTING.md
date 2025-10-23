@@ -117,6 +117,15 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 - Make sure PostgreSQL started: `docker-compose logs postgres`
 - Wait 30-60 seconds for first-time database setup
 
+**Q: Network errors or "network not found"?**
+- **Solution**: Use the quick fix script:
+  ```bash
+  ./docker-fix.sh         # Mac/Linux
+  docker-fix.bat          # Windows
+  ```
+- This cleans up orphaned containers and networks
+- Common after switching branches or interrupted builds
+
 **Q: Docker Desktop not running?**
 - **Solution**: Open Docker Desktop and wait for "running" status
 - The `docker-start.sh`/`docker-start.bat` scripts check this automatically
