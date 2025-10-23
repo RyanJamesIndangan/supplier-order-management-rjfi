@@ -1,8 +1,13 @@
-# 🔧 Fix for Docker Entrypoint Issue
+# 🔧 Docker Troubleshooting Guide
 
-## Quick Fix Commands
+## Quick Fix for "no such file or directory" Error
 
-Run these commands in order:
+If you encounter the error:
+```
+exec /app/docker-entrypoint.sh: no such file or directory
+```
+
+Run these commands:
 
 ```bash
 # 1. Stop and remove all containers/volumes
@@ -39,7 +44,7 @@ You should see:
 
 ---
 
-## If Still Having Issues
+## Alternative Fixes
 
 ### Option A: Manual line ending fix
 ```bash
@@ -67,7 +72,7 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 **Q: Still getting "no such file or directory"?**
 - Make sure you ran `docker-compose build --no-cache api`
-- Docker might be using cached layers with old CRLF endings
+- Docker might be using cached layers with old line endings
 
 **Q: Permission denied on docker-entrypoint.sh?**
 - Run: `chmod +x docker-entrypoint.sh`
