@@ -27,7 +27,12 @@ if errorlevel 1 (
 
 echo ✅ docker-compose is available
 echo.
-echo 🔄 Starting services...
+echo 🔄 Building containers (first time or updates)...
+echo    This ensures line endings are fixed automatically
+docker-compose build --no-cache api
+
+echo.
+echo 🚀 Starting services...
 echo    - PostgreSQL database
 echo    - API server
 echo    - Prisma Studio (database UI)

@@ -1,12 +1,32 @@
 # 🔧 Docker Troubleshooting Guide
 
-## ✅ **GOOD NEWS: Line Ending Issues Are Now Automated!**
+## ⚠️ **CRITICAL: Fresh Clone Users - READ THIS FIRST!**
 
-As of the latest version, the Dockerfile **automatically fixes line endings** during the build process. This means:
+If you just cloned the repo and the API container keeps restarting with exit code 255:
+
+**YOU MUST BUILD THE IMAGE FIRST:**
+```bash
+docker-compose build --no-cache api
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
+
+**Why?** The Dockerfile contains `dos2unix` to fix line endings automatically, but this only works when you BUILD the image. Just running `docker-compose up` without building first will fail.
+
+**Easiest Solution**: Use the startup script (it builds automatically):
+```bash
+./docker-start.sh    # Mac/Linux
+docker-start.bat     # Windows
+```
+
+---
+
+## ✅ **Line Ending Issues Are Now Automated!**
+
+The Dockerfile **automatically fixes line endings** during the build process:
 - ✅ Works on Windows, Mac, and Linux without manual configuration
 - ✅ No need to run `sed` or `dos2unix` commands manually
 - ✅ `.gitattributes` ensures consistent line endings across all platforms
-- ✅ Clone and run - it just works!
+- ✅ **BUT**: You MUST build the image first (see above)
 
 ---
 

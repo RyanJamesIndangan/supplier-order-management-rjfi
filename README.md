@@ -5,6 +5,8 @@
 **Assessment**: AI Software Developer - Technical Assessment  
 **Repository**: https://github.com/RyanJamesIndangan/supplier-order-management-rjfi
 
+> **⚡ EVALUATORS**: For fastest setup, see [`QUICK_START.md`](QUICK_START.md) - Copy/paste commands for instant deployment!
+
 ---
 
 ## 🎯 What This Does
@@ -62,7 +64,14 @@ docker-start.bat
 ```
 
 #### 📝 **Alternative: Manual Command**
+
+**IMPORTANT**: On first run or fresh clone, you MUST build first:
 ```bash
+# First time setup (builds image with line ending fix)
+docker-compose build --no-cache api
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Subsequent runs (after first time)
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 
